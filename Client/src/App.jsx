@@ -1,9 +1,19 @@
-import React from 'react'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import HotelList from "./components/HotelList";
+import Compare from "./components/Compare";
+import { getAmadeusToken } from "./features/hotels/amadeusAuth";
+import { useEffect } from "react";
 
-const App = () => {
+export default function App() {
+  useEffect(() => {
+    getAmadeusToken();
+  }, []);
   return (
-    <div className='text-2xl'>App</div>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HotelList />} />
+        <Route path="/compare" element={<Compare />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App
