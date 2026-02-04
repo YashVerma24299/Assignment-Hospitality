@@ -1,8 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HotelList from "./components/HotelList";
-import Compare from "./components/Compare";
-import { getAmadeusToken } from "./features/hotels/amadeusAuth";
 import { useEffect } from "react";
+import Compare from "./pages/Compare";
+import Home from "./pages/Home";
+import MainLayout from "./components/layouts/MainLayout";
+import { getAmadeusToken } from "./services/amadeusAuth";
 
 export default function App() {
   useEffect(() => {
@@ -11,9 +12,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HotelList />} />
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Home />} />
         <Route path="/compare" element={<Compare />} />
-      </Routes>
+      </Route>
+    </Routes>
     </BrowserRouter>
   );
 }

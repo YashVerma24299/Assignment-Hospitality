@@ -1,34 +1,58 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchHotels } from "./hotelService";
+import { createSlice } from "@reduxjs/toolkit";
 
-export const loadHotels = createAsyncThunk(
-  "hotels/load",
-  async ({ city, page }) => fetchHotels(city, page)
-);
+export const initialState = {
+  isLoading: false,
+  list: [],
+  compare: JSON.parse(localStorage.getItem("compare")) || [],
+  page: 0,
+};
 
-const hotelSlice = createSlice({
+export const hotelSlice = createSlice({
   name: "hotels",
-  initialState: {
-    list: [],
-    compare: [],
-    page: 0,
-  },
+  initialState,
   reducers: {
-    toggleCompare: (state, action) => {
-      const id = action.payload;
-      state.compare.includes(id)
-        ? state.compare = state.compare.filter(i => i !== id)
-        : state.compare.push(id);
+    setLoading: (state, { payload }) => {
+      state.isLoading = payload;
+    },
+
+    setHotels: (state, { payload }) => {
+      state.list = payload;
+    },
+
+    // appendHotels: (state, { payload }) => {
+    //   state.list = [...state.list, ...payload];
+    //   state.page += 1;
+    // },
+    appendHotels: (state, { payload }) => {
+  const existingIds = new Set(state.list.map(h => h.hotelId));
+
+  const uniqueHotels = payload.filter(
+    h => !existingIds.has(h.hotelId)
+  );
+
+  state.list = [...state.list, ...uniqueHotels];
+  state.page += 1;},
+
+    toggleCompare: (state, { payload }) => {
+      if (state.compare.includes(payload)) {
+        state.compare = state.compare.filter(i => i !== payload);
+      } else {
+        state.compare.push(payload);
+      }
+
       localStorage.setItem("compare", JSON.stringify(state.compare));
     },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(loadHotels.fulfilled, (state, action) => {
-      state.list.push(...action.payload);
-      state.page += 1;
-    });
+
+    resetHotels: () => initialState,
   },
 });
 
-export const { toggleCompare } = hotelSlice.actions;
+export const {
+  setLoading,
+  setHotels,
+  appendHotels,
+  toggleCompare,
+  resetHotels,
+} = hotelSlice.actions;
+
 export default hotelSlice.reducer;
