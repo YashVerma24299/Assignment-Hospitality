@@ -42,11 +42,13 @@ export default function HotelGrid({
           ))}
       </div>
 
+      {hotels.length>1 &&
       <div className="flex justify-center mt-10">
         <Button disabled={loading} onClick={onLoadMore}>
           {loading ? "Loading..." : "Load More"}
         </Button>
       </div>
+      }
     </>
   );
 }
