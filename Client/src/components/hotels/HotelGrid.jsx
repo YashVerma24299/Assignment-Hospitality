@@ -4,7 +4,13 @@ import Button from "../Common/Button";
 import Loader from "../Common/Loader";
 import { useEffect, useState } from "react";
 
-export default function HotelGrid({ hotels, loading, onCompare, onLoadMore, compare = [] }) {
+export default function HotelGrid({
+  hotels,
+  loading,
+  onCompare,
+  onLoadMore,
+  compare = [],
+}) {
   const [showSkeleton, setShowSkeleton] = useState(false);
   useEffect(() => {
     if (loading) {
@@ -37,7 +43,9 @@ export default function HotelGrid({ hotels, loading, onCompare, onLoadMore, comp
       </div>
 
       <div className="flex justify-center mt-10">
-        <Button onClick={onLoadMore}>Load More</Button>
+        <Button disabled={loading} onClick={onLoadMore}>
+          {loading ? "Loading..." : "Load More"}
+        </Button>
       </div>
     </>
   );

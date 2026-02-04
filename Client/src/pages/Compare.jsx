@@ -14,14 +14,12 @@ import { useEffect } from "react";
 export default function Compare() {
   const { list, compare } = useSelector((state) => state.hotels);
   
-
-  // Normalize + mock data (Ama deus does not provide ratings/prices here)
   const compareData = list
     .filter((hotel) => compare.includes(hotel.hotelId))
     .map((hotel) => ({
       name: hotel.name,
-      rating: Math.floor(Math.random() * 5) + 1, // mock rating (1–5)
-      price: Math.floor(Math.random() * 4000) + 2000, // mock price
+      rating: Math.floor(Math.random() * 5) + 1, 
+      price: Math.floor(Math.random() * 4000) + 2000,
     }));
 
   // EMPTY STATE
