@@ -1,35 +1,42 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { supabase } from "../../supabaseClient";
+import { createSlice } from "@reduxjs/toolkit";
 
-export const loginUser = createAsyncThunk(
-  "auth/login",
-  async ({ email, password }) => {
-    const { data, error } =
-      await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-    return data.session;
-  }
-);
+const initialState = {
+  user: JSON.parse(localStorage.getItem("currentUser")) || null,
+};
 
 const authSlice = createSlice({
   name: "auth",
-  initialState: {
-    session: JSON.parse(localStorage.getItem("session")) || null,
-  },
+  initialState,
   reducers: {
-    logout: (state) => {
-      supabase.auth.signOut();
-      state.session = null;
-      localStorage.removeItem("session");
+    signup: (state, { payload }) => {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+
+      const exists = users.find(u => u.email === payload.email);
+      if (exists) return;
+
+      users.push(payload);
+      localStorage.setItem("users", JSON.stringify(users));
     },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(loginUser.fulfilled, (state, action) => {
-      state.session = action.payload;
-      localStorage.setItem("session", JSON.stringify(action.payload));
-    });
+
+    login: (state, { payload }) => {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+
+      const match = users.find(
+        u => u.email === payload.email && u.password === payload.password
+      );
+
+      if (!match) return;
+
+      localStorage.setItem("currentUser", JSON.stringify(match));
+      state.user = match;
+    },
+
+    logout: (state) => {
+      localStorage.removeItem("currentUser");
+      state.user = null;
+    },
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { signup, login, logout } = authSlice.actions;
 export default authSlice.reducer;
